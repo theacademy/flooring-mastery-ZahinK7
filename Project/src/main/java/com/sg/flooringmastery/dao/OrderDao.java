@@ -13,7 +13,11 @@ public interface OrderDao {
 
     List<Order> getOrdersByDate(LocalDate Date);
 
+    Order getOrderByNumberAndDate(int orderNumber, LocalDate date);
+
     Order removeOrder(int orderNumber, LocalDate Date);
+
+    Order editOrder(int orderNumber, LocalDate date, Order updatedOrder);
 
     void saveOrder();
 }

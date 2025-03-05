@@ -38,6 +38,16 @@ public class OrderDaoFileImpl implements OrderDao {
         return ordersOnDate;  // Return the list of orders matching the date
     }
 
+    @Override
+    public Order getOrderByNumberAndDate(int orderNumber, LocalDate date) {
+        for (Order order : orders.values()) {
+            if (order.getOrderNumber() == orderNumber && order.getOrderDate().equals(date)) {
+                return order;
+            }
+        }
+        return null;
+    }
+
 
     @Override
     public Order removeOrder(int orderNumber, LocalDate date) {
@@ -50,6 +60,26 @@ public class OrderDaoFileImpl implements OrderDao {
         return null;
     }
 
+    @Override
+    public Order editOrder(int orderNumber, LocalDate date, Order updatedOrder) {
+        // Find the order by number and date
+        Order existingOrder = getOrderByNumberAndDate(orderNumber, date);
+
+
+        if (existingOrder != null) {
+
+            orders.put(orderNumber, updatedOrder);
+            return updatedOrder;
+        }
+
+        return null; // Order not found
+    }
+
+    //To be implemented
+//    public Order editOrder(){
+//
+//
+//    }
 
     @Override
     public void saveOrder() {

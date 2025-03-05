@@ -37,7 +37,7 @@ public class FlooringMasteryController {
                     createOrder();
                     break;
                 case 3:
-                    io.print("Edit an Order");
+                    editOrder();
                     break;
                 case 4:
                     removeOrder();
@@ -81,7 +81,7 @@ public class FlooringMasteryController {
         view.displayDisplayAllBanner();
 
         // Prompt user for the order date
-        LocalDate date = view.getOrderDate();
+        LocalDate date = view.getValidOrderDate();
 
         // Pass the retrieved date to getOrdersByDate
         List<Order> orderList = orderDao.getOrdersByDate(date);
@@ -93,10 +93,43 @@ public class FlooringMasteryController {
     private void removeOrder(){
         view.displayRemoveOrderBanner();
         int orderNumber = view.getOrderNumberChoice();
-        LocalDate date = view.getOrderDate();
+        LocalDate date = view.getValidOrderDate();
         Order removedOrder = orderDao.removeOrder(orderNumber,date);
 
         view.displayRemoveResult(removedOrder);
+    }
+
+    private void editOrder() {
+        view.displayEditOrderBanner();
+
+        // Get order date and number from user
+        LocalDate orderDate = view.getValidOrderDate();
+        int orderNumber = view.getOrderNumberChoice();
+
+        // Retrieve the order
+        Order existingOrder = orderDao.getOrderByNumberAndDate(orderNumber, orderDate);
+
+        // If order exists, let user edit it
+        if (existingOrder != null) {
+            Order updatedOrder = view.editOrderDetails(existingOrder);
+
+            // Recalculate costs based on updated details
+            if (updatedOrder != null) {
+                // Update costs based on potentially changed product, state, or area
+                updatedOrder.setMaterialCost(service.calculateMaterialCost(updatedOrder));
+                updatedOrder.setLaborCost(service.calculateLaborCost(updatedOrder));
+                updatedOrder.setTax(service.calculateTax(updatedOrder));
+                updatedOrder.setTotal(service.calculateTotalCost(updatedOrder));
+
+                // Save the updated order
+                orderDao.editOrder(orderNumber, orderDate, updatedOrder);
+                view.displayEditSuccessBanner();
+            } else {
+                System.out.println("Edit Cancelled");;
+            }
+        } else {
+            System.out.println("Order not found");;
+        }
     }
 
     private void unknownCommand() {

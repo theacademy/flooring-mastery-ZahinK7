@@ -116,7 +116,7 @@ public class FlooringMasteryView {
         return area;
     }
 
-    private LocalDate getValidOrderDate() {
+    public LocalDate getValidOrderDate() {
         boolean isValid = false;
         LocalDate orderDate = null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -144,18 +144,78 @@ public class FlooringMasteryView {
         return orderDate;
     }
 
-    public LocalDate getOrderDate() {
-        String dateString = io.readString("Enter order date (YYYY-MM-DD): ");
-
-        // Convert string input to LocalDate
-        return LocalDate.parse(dateString);
-    }
+//    public LocalDate getOrderDate() {
+//        String dateString = io.readString("Enter order date (YYYY-MM-DD): ");
+//
+//        // Convert string input to LocalDate
+//        return LocalDate.parse(dateString);
+//    }
 
     public int getOrderNumberChoice(){
         return io.readInt("Please enter your order number: ");
     }
 
+    public Order editOrderDetails(Order order) {
+        io.print("Editing Order #" + order.getOrderNumber() + " from " + order.getOrderDate());
+        io.print("Press Enter to keep existing value.");
 
+        // Edit customer name
+        String customerNamePrompt = String.format("Enter customer name (%s): ", order.getCustomerName());
+        String newCustomerName = io.readString(customerNamePrompt);
+        if (!newCustomerName.trim().isEmpty()) {
+            // Validate new customer name
+            if (newCustomerName.matches("^[a-zA-Z0-9.,\\s]+$")) {
+                order.setCustomerName(newCustomerName);
+            } else {
+                io.print("Invalid customer name format. Original name retained.");
+            }
+        }
+
+        // Edit state
+        String statePrompt = String.format("Enter state (%s): ", order.getState());
+        String newState = io.readString(statePrompt);
+        if (!newState.trim().isEmpty()) {
+            order.setState(newState.toUpperCase());
+        }
+
+        // Edit product type
+        String productPrompt = String.format("Enter product type (%s): ", order.getProductType());
+        String newProductType = io.readString(productPrompt);
+        if (!newProductType.trim().isEmpty()) {
+            order.setProductType(newProductType);
+        }
+
+        // Edit area
+        String areaPrompt = String.format("Enter area in square feet (%s): ", order.getArea());
+        String newAreaInput = io.readString(areaPrompt);
+        if (!newAreaInput.trim().isEmpty()) {
+            try {
+                BigDecimal newArea = new BigDecimal(newAreaInput);
+                if (newArea.compareTo(BigDecimal.valueOf(100)) >= 0) {
+                    order.setArea(newArea);
+                } else {
+                    io.print("Area must be at least 100 sq ft. Original area retained.");
+                }
+            } catch (NumberFormatException e) {
+                io.print("Invalid number format. Original area retained.");
+            }
+        }
+
+        // Confirm the changes
+        io.print("\n=== Updated Order Details ===");
+        io.print("Order Number: " + order.getOrderNumber());
+        io.print("Customer Name: " + order.getCustomerName());
+        io.print("State: " + order.getState());
+        io.print("Product Type: " + order.getProductType());
+        io.print("Area: " + order.getArea() + " sq ft");
+
+        String confirm = io.readString("\nSave these changes? (Y/N): ");
+        if (confirm.equalsIgnoreCase("Y")) {
+            return order;
+        } else {
+            return null; // User canceled the edit
+        }
+    }
 
     public void displayOrders(List<Order> orders) {
         if (orders == null || orders.isEmpty()) {
@@ -177,7 +237,7 @@ public class FlooringMasteryView {
     }
     public void displayAddSuccessBanner() {
         io.readString(
-                "Order successfully add.  Please hit enter to continue");
+                "Order successfully add");
     }
 
     public void displayDisplayAllBanner() {
@@ -194,6 +254,14 @@ public class FlooringMasteryView {
         }else{
             io.print("No such order.");
         }
+    }
+
+    public void displayEditOrderBanner() {
+        io.print("=== Edit Order ===");
+    }
+    public void displayEditSuccessBanner() {
+        io.readString(
+                "Order successfully edited. Press enter to back to menu");
     }
 
     public void displayExitBanner() {
