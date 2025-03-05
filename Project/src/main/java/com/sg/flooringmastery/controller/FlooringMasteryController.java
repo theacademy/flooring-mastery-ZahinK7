@@ -49,11 +49,11 @@ public class FlooringMasteryController {
                     keepGoing = false;
                     break;
                 default:
-                    io.print("UNKNOWN COMMAND");
+                    unknownCommand();
             }
 
         }
-        io.print("GOOD BYE");
+       exitMessage();
     }
 
     private int getMenuSelection(){
@@ -97,6 +97,14 @@ public class FlooringMasteryController {
         Order removedOrder = orderDao.removeOrder(orderNumber,date);
 
         view.displayRemoveResult(removedOrder);
+    }
+
+    private void unknownCommand() {
+        view.displayUnknownCommandBanner();
+    }
+
+    private void exitMessage() {
+        view.displayExitBanner();
     }
 
 

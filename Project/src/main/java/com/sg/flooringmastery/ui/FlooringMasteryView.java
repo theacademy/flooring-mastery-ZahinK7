@@ -4,6 +4,8 @@ import com.sg.flooringmastery.dto.Order;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class FlooringMasteryView {
@@ -27,15 +29,26 @@ public class FlooringMasteryView {
     };
 
     //Calculation for Area needs to be done
-    public Order getOrderDetails(){
+    public Order getOrderDetails() {
+        // Get basic order details with minimal validation
         int orderNumber = io.readInt("Please enter number: ");
-        String customerName = io.readString("Add your name: ");
+
+        // CUSTOMER NAME VALIDATION - focused validation area #1
+        String customerName = getValidCustomerName();
+
+        // Basic state input
         String state = io.readString("Add state: ");
+
+        // Basic product type input
         String productType = io.readString("What is your product: ");
-        BigDecimal area = io.readBigDecimal("How many square feet? (Minimum of 100 sq ft)",BigDecimal.valueOf(100),BigDecimal.valueOf(10000));
-        // Read the order date as a string and convert to LocalDate
-        String dateInput = io.readString("Enter order date (YYYY-MM-DD): ");
-        LocalDate orderDate = LocalDate.parse(dateInput);
+
+        // AREA VALIDATION - focused validation area #2
+        BigDecimal area = getValidArea();
+
+        // DATE VALIDATION - focused validation area #3
+        LocalDate orderDate = getValidOrderDate();
+
+        // Create and return the order
         Order currentOrder = new Order(orderNumber);
         currentOrder.setOrderNumber(orderNumber);
         currentOrder.setCustomerName(customerName);
@@ -43,7 +56,92 @@ public class FlooringMasteryView {
         currentOrder.setProductType(productType);
         currentOrder.setArea(area);
         currentOrder.setOrderDate(orderDate);
+
         return currentOrder;
+    }
+
+    private String getValidCustomerName() {
+        boolean isValid = false;
+        String customerName = "";
+
+        while (!isValid) {
+            customerName = io.readString("Add your name: ");
+
+            // Check if name is empty
+            if (customerName == null || customerName.trim().isEmpty()) {
+                io.print("Error: Customer name cannot be empty. Please try again.");
+                continue;
+            }
+
+            // Remove extra spaces and check for invalid characters
+            customerName = customerName.trim().replaceAll("\\s+", " ");
+
+            if (!customerName.matches("^[a-zA-Z0-9.,\\s]+$")) {
+                io.print("Error: Customer name can only contain letters, numbers, spaces, commas, and periods. Please try again.");
+                continue;
+            }
+
+            isValid = true;
+        }
+
+        return customerName;
+    }
+
+    private BigDecimal getValidArea() {
+        boolean isValid = false;
+        BigDecimal area = BigDecimal.ZERO;
+
+        while (!isValid) {
+            try {
+                area = io.readBigDecimal("How many square feet? (Minimum of 100 sq ft)");
+
+                // Check minimum area requirement
+                if (area.compareTo(BigDecimal.valueOf(100)) < 0) {
+                    io.print("Error: Area must be at least 100 square feet. Please try again.");
+                    continue;
+                }
+
+                // Check maximum area limit
+                if (area.compareTo(BigDecimal.valueOf(10000000)) > 0) {
+                    io.print("Error: Area cannot exceed 10,000 square feet. Please try again.");
+                    continue;
+                }
+
+                isValid = true;
+            } catch (Exception e) {
+                io.print("Error: Invalid number format. Please enter a valid number for the area.");
+            }
+        }
+
+        return area;
+    }
+
+    private LocalDate getValidOrderDate() {
+        boolean isValid = false;
+        LocalDate orderDate = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate currentDate = LocalDate.now();
+
+        while (!isValid) {
+            try {
+                String dateInput = io.readString("Enter order date (YYYY-MM-DD): ");
+
+                // Try to parse the date
+                orderDate = LocalDate.parse(dateInput, formatter);
+
+                // Check if the date is not in the past
+                if (orderDate.isBefore(currentDate)) {
+                    io.print("Error: Order date must be today or in the future. Please try again.");
+                    continue;
+                }
+
+                isValid = true;
+            } catch (DateTimeParseException e) {
+                io.print("Error: Invalid date format. Please use YYYY-MM-DD format (e.g., 2025-03-15).");
+            }
+        }
+
+        return orderDate;
     }
 
     public LocalDate getOrderDate() {
@@ -96,6 +194,14 @@ public class FlooringMasteryView {
         }else{
             io.print("No such order.");
         }
+    }
+
+    public void displayExitBanner() {
+        io.print("Good Bye!!!");
+    }
+
+    public void displayUnknownCommandBanner() {
+        io.print("Unknown Command!!!");
     }
 
 }
