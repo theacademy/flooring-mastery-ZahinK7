@@ -1,6 +1,8 @@
 package com.sg.flooringmastery.dto;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
 
 public class Order {
 
@@ -16,6 +18,7 @@ public class Order {
     private BigDecimal laborCost;
     private BigDecimal tax;
     private BigDecimal total;
+    private LocalDate orderDate;
 
     public Order (int orderNumber){
         this.orderNumber=orderNumber;
@@ -115,5 +118,13 @@ public class Order {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
+    }
+
+    public LocalDate getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDate orderDate) {
+        this.orderDate = orderDate;
     }
 }

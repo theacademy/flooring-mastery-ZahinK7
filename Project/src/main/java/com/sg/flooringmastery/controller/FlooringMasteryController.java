@@ -10,6 +10,8 @@ import com.sg.flooringmastery.ui.UserIO;
 import com.sg.flooringmastery.ui.UserIOConsoleImpl;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
 public class FlooringMasteryController {
 
@@ -29,7 +31,7 @@ public class FlooringMasteryController {
 
             switch (menuSelection) {
                 case 1:
-                    io.print("Display Orders");
+                    listOrders();
                     break;
                 case 2:
                     createOrder();
@@ -71,9 +73,23 @@ public class FlooringMasteryController {
         newOrder.setLaborCost(service.calculateLaborCost(newOrder));
         newOrder.setTax(service.calculateTax(newOrder));
         newOrder.setTotal(service.calculateTotalCost(newOrder));
-        System.out.println(newOrder.getMaterialCost()+" "+newOrder.getLaborCost()+" "+newOrder.getTax()+" "+newOrder.getTotal());
+        System.out.println(newOrder.getMaterialCost()+" "+newOrder.getLaborCost()+" "+newOrder.getTax()+" "+newOrder.getTotal()+" "+newOrder.getOrderDate());
         orderDao.addOrder(newOrder.getOrderNumber(), newOrder);
     }
+
+    private void listOrders() {
+        view.displayDisplayAllBanner();
+
+        // Prompt user for the order date
+        LocalDate date = view.getOrderDate();
+
+        // Pass the retrieved date to getOrdersByDate
+        List<Order> orderList = orderDao.getOrdersByDate(date);
+
+        // Display the list of orders
+        view.displayOrders(orderList);
+    }
+
 
 }
 

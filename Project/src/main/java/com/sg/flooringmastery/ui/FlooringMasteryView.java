@@ -3,6 +3,7 @@ package com.sg.flooringmastery.ui;
 import com.sg.flooringmastery.dto.Order;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 public class FlooringMasteryView {
@@ -32,20 +33,34 @@ public class FlooringMasteryView {
         String state = io.readString("Add state: ");
         String productType = io.readString("What is your product: ");
         BigDecimal area = io.readBigDecimal("How many square feet? (Minimum of 100 sq ft)",BigDecimal.valueOf(100),BigDecimal.valueOf(10000));
+        // Read the order date as a string and convert to LocalDate
+        String dateInput = io.readString("Enter order date (YYYY-MM-DD): ");
+        LocalDate orderDate = LocalDate.parse(dateInput);
         Order currentOrder = new Order(orderNumber);
         currentOrder.setOrderNumber(orderNumber);
         currentOrder.setCustomerName(customerName);
         currentOrder.setState(state);
         currentOrder.setProductType(productType);
         currentOrder.setArea(area);
+        currentOrder.setOrderDate(orderDate);
         return currentOrder;
+    }
+
+    public LocalDate getOrderDate() {
+        String dateString = io.readString("Enter order date (YYYY-MM-DD): ");
+
+        // Convert string input to LocalDate
+        return LocalDate.parse(dateString);
     }
 
 
 
 
     public void  displayOrders(List<Order> orders){
+        for(Order orderByDate:orders){
+            io.print(String.valueOf(orderByDate.getOrderNumber())+" "+orderByDate.getCustomerName()+" "+orderByDate.getOrderDate()+" "+orderByDate.getProductType()+" "+orderByDate.getTotal());
 
+        }
     }
 
     public void displayAddOrderBanner() {
@@ -56,5 +71,8 @@ public class FlooringMasteryView {
                 "Order successfully add.  Please hit enter to continue");
     }
 
+    public void displayDisplayAllBanner() {
+        io.print("=== Display All Orders by date ===");
+    }
 
 }
