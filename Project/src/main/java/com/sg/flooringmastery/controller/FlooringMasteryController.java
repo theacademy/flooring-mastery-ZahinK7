@@ -40,7 +40,7 @@ public class FlooringMasteryController {
                     io.print("Edit an Order");
                     break;
                 case 4:
-                    io.print("Remove an Order");
+                    removeOrder();
                     break;
                 case 5:
                     io.print("Export All Data");
@@ -88,6 +88,15 @@ public class FlooringMasteryController {
 
         // Display the list of orders
         view.displayOrders(orderList);
+    }
+
+    private void removeOrder(){
+        view.displayRemoveOrderBanner();
+        int orderNumber = view.getOrderNumberChoice();
+        LocalDate date = view.getOrderDate();
+        Order removedOrder = orderDao.removeOrder(orderNumber,date);
+
+        view.displayRemoveResult(removedOrder);
     }
 
 

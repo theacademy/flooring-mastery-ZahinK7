@@ -9,11 +9,11 @@ public interface OrderDao {
 
     Order addOrder(int orderNumber, Order order);
 
-    Order getOrder(String orderNumber);
+    Order getOrder(int orderNumber);
 
     List<Order> getOrdersByDate(LocalDate Date);
 
-    Order removeOrder(String orderNumber);
+    Order removeOrder(int orderNumber, LocalDate Date);
 
     void saveOrder();
 }

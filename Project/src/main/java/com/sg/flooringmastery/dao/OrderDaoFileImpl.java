@@ -10,17 +10,17 @@ import java.util.Map;
 
 public class OrderDaoFileImpl implements OrderDao {
 
-    private Map<String,Order> orders = new HashMap<>();
+    private Map<Integer, Order> orders = new HashMap<>();
+
 
     @Override
     public Order addOrder(int orderNumber, Order order) {
-        Order prevOrder = orders.put(String.valueOf(orderNumber),order);
-
-        return prevOrder;
+        return orders.put(orderNumber, order);  // No need for String conversion
     }
 
+
     @Override
-    public Order getOrder(String orderNumber) {
+    public Order getOrder(int orderNumber) {
         return null;
     }
 
@@ -40,9 +40,16 @@ public class OrderDaoFileImpl implements OrderDao {
 
 
     @Override
-    public Order removeOrder(String orderNumber) {
+    public Order removeOrder(int orderNumber, LocalDate date) {
+        for (Order order : orders.values()) {
+            if (order.getOrderNumber() == orderNumber && order.getOrderDate().equals(date)) {
+                return orders.remove(orderNumber);
+            }
+        }
+
         return null;
     }
+
 
     @Override
     public void saveOrder() {

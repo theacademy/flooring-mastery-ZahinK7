@@ -53,13 +53,24 @@ public class FlooringMasteryView {
         return LocalDate.parse(dateString);
     }
 
+    public int getOrderNumberChoice(){
+        return io.readInt("Please enter your order number: ");
+    }
 
 
 
-    public void  displayOrders(List<Order> orders){
-        for(Order orderByDate:orders){
-            io.print(String.valueOf(orderByDate.getOrderNumber())+" "+orderByDate.getCustomerName()+" "+orderByDate.getOrderDate()+" "+orderByDate.getProductType()+" "+orderByDate.getTotal());
+    public void displayOrders(List<Order> orders) {
+        if (orders == null || orders.isEmpty()) {
+            io.print("No orders found for the given date.");
+            return;
+        }
 
+        for (Order orderByDate : orders) {
+            io.print(orderByDate.getOrderNumber() + " " +
+                    orderByDate.getCustomerName() + " " +
+                    orderByDate.getOrderDate() + " " +
+                    orderByDate.getProductType() + " " +
+                    orderByDate.getTotal());
         }
     }
 
@@ -73,6 +84,18 @@ public class FlooringMasteryView {
 
     public void displayDisplayAllBanner() {
         io.print("=== Display All Orders by date ===");
+    }
+
+    public void displayRemoveOrderBanner () {
+        io.print("=== Remove Student ===");
+    }
+
+    public void displayRemoveResult(Order orderRecord) {
+        if(orderRecord != null){
+            io.print("Order successfully removed.");
+        }else{
+            io.print("No such order.");
+        }
     }
 
 }
