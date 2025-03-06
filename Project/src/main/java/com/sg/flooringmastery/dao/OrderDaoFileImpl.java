@@ -3,6 +3,8 @@ package com.sg.flooringmastery.dao;
 import com.sg.flooringmastery.dto.Order;
 import org.springframework.stereotype.Repository;
 import jakarta.annotation.PostConstruct;
+
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -76,7 +78,14 @@ public class OrderDaoFileImpl implements OrderDao {
 
     @Override
     public void exportAllOrders(LocalDate date) {
-        String fileName = "Orders_" + date.format(DateTimeFormatter.ofPattern("MMddyyyy")) + ".txt";
+        String directory = "Project/SampleFileData/SampleFileData/Orders/";  // Set the correct path
+        String fileName = directory + "Orders_" + date.format(DateTimeFormatter.ofPattern("MMddyyyy")) + ".txt";
+
+        // Ensure the directory exists
+        File folder = new File(directory);
+        if (!folder.exists()) {
+            folder.mkdirs();  // Create directory if it doesn’t exist
+        }
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
             writer.println("OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total");
@@ -101,6 +110,7 @@ public class OrderDaoFileImpl implements OrderDao {
             System.out.println("Error exporting orders: " + e.getMessage());
         }
     }
+
 
     @Override
     public void saveOrder() {
