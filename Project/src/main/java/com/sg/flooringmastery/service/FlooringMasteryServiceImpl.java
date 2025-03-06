@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.regex.Pattern;
+import java.math.RoundingMode;
 
 @Service  // Marks this class as a Spring-managed Service
 public class FlooringMasteryServiceImpl implements FlooringMasteryService {
@@ -32,22 +33,31 @@ public class FlooringMasteryServiceImpl implements FlooringMasteryService {
         if (order.getArea() == null || order.getCostPerSquareFoot() == null) {
             throw new IllegalArgumentException("Error: Order is missing area or product cost data.");
         }
-        return order.getArea().multiply(order.getCostPerSquareFoot());
+        return order.getArea()
+                .multiply(order.getCostPerSquareFoot())
+                .setScale(2, RoundingMode.HALF_UP);  // Round to 2 decimal places
     }
 
     @Override
     public BigDecimal calculateLaborCost(Order order) {
-        return order.getArea().multiply(order.getLaborCostPerSquareFoot());
+        return order.getArea()
+                .multiply(order.getLaborCostPerSquareFoot())
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
     @Override
     public BigDecimal calculateTax(Order order) {
-        return (order.getMaterialCost().add(order.getLaborCost())).multiply(order.getTaxRate().divide(BigDecimal.valueOf(100)));
+        return (order.getMaterialCost().add(order.getLaborCost()))
+                .multiply(order.getTaxRate().divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP))
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
     @Override
     public BigDecimal calculateTotalCost(Order order) {
-        return order.getMaterialCost().add(order.getLaborCost()).add(order.getTax());
+        return order.getMaterialCost()
+                .add(order.getLaborCost())
+                .add(order.getTax())
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
     public boolean validateOrderDate(Order order) {
@@ -82,7 +92,7 @@ public class FlooringMasteryServiceImpl implements FlooringMasteryService {
             order.setLaborCostPerSquareFoot(product.getLaborCostPerSquareFoot());
         }
 
-        // Recalculate order costs
+        // Recalculate order costs with rounding
         order.setMaterialCost(calculateMaterialCost(order));
         order.setLaborCost(calculateLaborCost(order));
         order.setTax(calculateTax(order));
