@@ -1,9 +1,11 @@
 package com.sg.flooringmastery.ui;
 
+import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.Scanner;
 
-public class UserIOConsoleImpl implements UserIO{
+@Component  // This makes Spring recognize it as a bean
+public class UserIOConsoleImpl implements UserIO {
 
     @Override
     public void print(String message) {
@@ -13,7 +15,6 @@ public class UserIOConsoleImpl implements UserIO{
     @Override
     public String readString(String prompt) {
         Scanner sc = new Scanner(System.in);
-
         System.out.println(prompt);
         return sc.nextLine();
     }
@@ -22,7 +23,6 @@ public class UserIOConsoleImpl implements UserIO{
     public int readInt(String prompt) {
         Scanner sc = new Scanner(System.in);
         int num;
-
         while (true) {
             System.out.println(prompt);
             try {
@@ -36,18 +36,15 @@ public class UserIOConsoleImpl implements UserIO{
         }
     }
 
-
     @Override
     public int readInt(String prompt, int min, int max) {
         Scanner sc = new Scanner(System.in);
         int num;
-
         while (true) {
             System.out.println(prompt);
             try {
                 num = sc.nextInt();
                 sc.nextLine(); // Consume newline character
-
                 if (num >= min && num <= max) {
                     return num;
                 } else {
@@ -60,11 +57,9 @@ public class UserIOConsoleImpl implements UserIO{
         }
     }
 
-
     @Override
     public BigDecimal readBigDecimal(String prompt) {
         Scanner sc = new Scanner(System.in);
-
         System.out.println(prompt);
         return new BigDecimal(sc.nextLine());
     }
@@ -73,10 +68,8 @@ public class UserIOConsoleImpl implements UserIO{
     public BigDecimal readBigDecimal(String prompt, BigDecimal min, BigDecimal max) {
         Scanner sc = new Scanner(System.in);
         BigDecimal num;
-
         System.out.println(prompt);
         num = new BigDecimal(sc.nextLine());
-
         while (num.compareTo(min) < 0 || num.compareTo(max) > 0) {
             System.out.println("Try again: ");
             num = new BigDecimal(sc.nextLine());
@@ -87,7 +80,6 @@ public class UserIOConsoleImpl implements UserIO{
     @Override
     public double readDouble(String prompt) {
         Scanner sc = new Scanner(System.in);
-
         System.out.println(prompt);
         return sc.nextDouble();
     }
@@ -95,12 +87,10 @@ public class UserIOConsoleImpl implements UserIO{
     @Override
     public double readDouble(String prompt, double min, double max) {
         Scanner sc = new Scanner(System.in);
-
         System.out.println(prompt);
         double num = sc.nextDouble();
-
-        while(num<min && num>max){
-            System.out.println("try again: ");
+        while (num < min && num > max) {
+            System.out.println("Try again: ");
             num = sc.nextDouble();
         }
         return num;
@@ -109,7 +99,6 @@ public class UserIOConsoleImpl implements UserIO{
     @Override
     public float readFloat(String prompt) {
         Scanner sc = new Scanner(System.in);
-
         System.out.println(prompt);
         return sc.nextFloat();
     }
@@ -117,16 +106,12 @@ public class UserIOConsoleImpl implements UserIO{
     @Override
     public float readFloat(String prompt, float min, float max) {
         Scanner sc = new Scanner(System.in);
-
         System.out.println(prompt);
         float num = sc.nextFloat();
-
-        while(num<min && num>max){
-            System.out.println("try again: ");
+        while (num < min && num > max) {
+            System.out.println("Try again: ");
             num = sc.nextFloat();
         }
         return num;
     }
-
-
 }

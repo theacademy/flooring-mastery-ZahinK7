@@ -4,31 +4,39 @@ import com.sg.flooringmastery.dao.OrderDao;
 import com.sg.flooringmastery.dao.ProductDao;
 import com.sg.flooringmastery.dao.TaxDao;
 import com.sg.flooringmastery.dto.Order;
+import com.sg.flooringmastery.dto.Tax;
 import com.sg.flooringmastery.service.FlooringMasteryServiceImpl;
 import com.sg.flooringmastery.ui.FlooringMasteryView;
 import com.sg.flooringmastery.ui.UserIO;
-import com.sg.flooringmastery.ui.UserIOConsoleImpl;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Controller  // Marks this as a Spring-managed Controller
 public class FlooringMasteryController {
 
-    private UserIO io = new UserIOConsoleImpl();
-    private FlooringMasteryView view;
-    private FlooringMasteryServiceImpl service;
-    private OrderDao orderDao;
-    private ProductDao productDao;
-    private TaxDao taxDao;
+    private final UserIO io;
+    private final FlooringMasteryView view;
+    private final FlooringMasteryServiceImpl service;
+    private final OrderDao orderDao;
+    private final ProductDao productDao;
+    private final TaxDao taxDao;
 
-
-    public FlooringMasteryController(FlooringMasteryView view, FlooringMasteryServiceImpl service, OrderDao orderDao, ProductDao productDao, TaxDao taxDao) {
+    @Autowired  // Spring will automatically inject dependencies
+    public FlooringMasteryController(UserIO io, FlooringMasteryView view, FlooringMasteryServiceImpl service,
+                                     OrderDao orderDao, ProductDao productDao, TaxDao taxDao) {
+        this.io = io;
         this.view = view;
         this.service = service;
         this.orderDao = orderDao;
         this.productDao = productDao;
         this.taxDao = taxDao;
+
     }
+
 
 
     public void run() {
@@ -69,6 +77,8 @@ public class FlooringMasteryController {
     private void createOrder() {
         view.displayAddOrderBanner();
 
+
+
         // Pass ProductDao & TaxDao to enforce validation
         Order newOrder = view.getOrderDetails(productDao, taxDao);
 
@@ -80,14 +90,12 @@ public class FlooringMasteryController {
         view.displayOrderSummary(newOrder);
     }
 
-
     private void listOrders() {
         view.displayDisplayAllBanner();
-        LocalDate date = view.getOrderDateForViewing(); // Use new method for past dates
+        LocalDate date = view.getOrderDateForViewing();
         List<Order> orderList = orderDao.getOrdersByDate(date);
         view.displayOrders(orderList);
     }
-
 
     private void removeOrder() {
         view.displayRemoveOrderBanner();
@@ -119,12 +127,10 @@ public class FlooringMasteryController {
     }
 
     private void exportOrders() {
-        LocalDate date = view.getValidOrderDate(); // Ask user for the date to export
+        LocalDate date = view.getValidOrderDate();
         orderDao.exportAllOrders(date);
         io.print("Orders exported successfully for " + date);
     }
-
-
 
     private void unknownCommand() {
         view.displayUnknownCommandBanner();

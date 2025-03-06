@@ -3,6 +3,7 @@ package com.sg.flooringmastery.ui;
 import com.sg.flooringmastery.dao.ProductDao;
 import com.sg.flooringmastery.dao.TaxDao;
 import com.sg.flooringmastery.dto.Order;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -10,6 +11,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+
+@Component
 public class FlooringMasteryView {
 
     private UserIO io;
@@ -152,13 +155,6 @@ public class FlooringMasteryView {
         return orderDate;
     }
 
-
-//    public LocalDate getOrderDate() {
-//        String dateString = io.readString("Enter order date (YYYY-MM-DD): ");
-//
-//        // Convert string input to LocalDate
-//        return LocalDate.parse(dateString);
-//    }
 
     public int getOrderNumberChoice(){
         return io.readInt("Please enter your order number: ");

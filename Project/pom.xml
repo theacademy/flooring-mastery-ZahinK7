@@ -17,6 +17,8 @@
 
 
     <dependencies>
+
+
         <!-- Spring Core for Dependency Injection -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -31,6 +33,13 @@
             <version>2.7.5</version> <!-- Add the missing version -->
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>2.1.1</version> <!-- Latest stable version -->
+        </dependency>
+
     </dependencies>
 
 

@@ -1,23 +1,30 @@
 package com.sg.flooringmastery.service;
 
+import com.sg.flooringmastery.dao.OrderDao;
 import com.sg.flooringmastery.dao.ProductDao;
 import com.sg.flooringmastery.dao.TaxDao;
 import com.sg.flooringmastery.dto.Order;
 import com.sg.flooringmastery.dto.Product;
 import com.sg.flooringmastery.dto.Tax;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.regex.Pattern;
 
+@Service  // Marks this class as a Spring-managed Service
 public class FlooringMasteryServiceImpl implements FlooringMasteryService {
 
-    private ProductDao productDao;
-    private TaxDao taxDao;
+    private final ProductDao productDao;
+    private final TaxDao taxDao;
+    private final OrderDao orderDao;
 
-    public FlooringMasteryServiceImpl(ProductDao productDao, TaxDao taxDao) {
+    @Autowired  // Spring automatically injects dependencies
+    public FlooringMasteryServiceImpl(ProductDao productDao, TaxDao taxDao, OrderDao orderDao) {
         this.productDao = productDao;
         this.taxDao = taxDao;
+        this.orderDao = orderDao;
     }
 
     @Override

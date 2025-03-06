@@ -7,6 +7,7 @@ com\sg\flooringmastery\ui\UserIOConsoleImpl.class
 com\sg\flooringmastery\dao\ProductDao.class
 com\sg\flooringmastery\controller\FlooringMasteryController.class
 com\sg\flooringmastery\dao\OrderDaoFileImpl.class
+com\sg\flooringmastery\AppConfig.class
 com\sg\flooringmastery\dao\ProductDaoFileImpl.class
 com\sg\flooringmastery\App.class
 com\sg\flooringmastery\dto\Order.class
