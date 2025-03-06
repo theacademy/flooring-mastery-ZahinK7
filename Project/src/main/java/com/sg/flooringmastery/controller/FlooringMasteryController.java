@@ -1,6 +1,8 @@
 package com.sg.flooringmastery.controller;
 
 import com.sg.flooringmastery.dao.OrderDao;
+import com.sg.flooringmastery.dao.ProductDao;
+import com.sg.flooringmastery.dao.TaxDao;
 import com.sg.flooringmastery.dto.Order;
 import com.sg.flooringmastery.service.FlooringMasteryServiceImpl;
 import com.sg.flooringmastery.ui.FlooringMasteryView;
@@ -16,12 +18,18 @@ public class FlooringMasteryController {
     private FlooringMasteryView view;
     private FlooringMasteryServiceImpl service;
     private OrderDao orderDao;
+    private ProductDao productDao;
+    private TaxDao taxDao;
 
-    public FlooringMasteryController(FlooringMasteryView view, FlooringMasteryServiceImpl service, OrderDao orderDao) {
+
+    public FlooringMasteryController(FlooringMasteryView view, FlooringMasteryServiceImpl service, OrderDao orderDao, ProductDao productDao, TaxDao taxDao) {
         this.view = view;
         this.service = service;
         this.orderDao = orderDao;
+        this.productDao = productDao;
+        this.taxDao = taxDao;
     }
+
 
     public void run() {
         boolean keepGoing = true;
@@ -60,9 +68,11 @@ public class FlooringMasteryController {
 
     private void createOrder() {
         view.displayAddOrderBanner();
-        Order newOrder = view.getOrderDetails();
 
-        // Populate order with correct tax rate and product costs
+        // Pass ProductDao & TaxDao to enforce validation
+        Order newOrder = view.getOrderDetails(productDao, taxDao);
+
+        // Populate costs before calculations
         service.populateOrderCosts(newOrder);
 
         // Save order
@@ -70,12 +80,14 @@ public class FlooringMasteryController {
         view.displayOrderSummary(newOrder);
     }
 
+
     private void listOrders() {
         view.displayDisplayAllBanner();
-        LocalDate date = view.getValidOrderDate();
+        LocalDate date = view.getOrderDateForViewing(); // Use new method for past dates
         List<Order> orderList = orderDao.getOrdersByDate(date);
         view.displayOrders(orderList);
     }
+
 
     private void removeOrder() {
         view.displayRemoveOrderBanner();
@@ -87,7 +99,7 @@ public class FlooringMasteryController {
 
     private void editOrder() {
         view.displayEditOrderBanner();
-        LocalDate orderDate = view.getValidOrderDate();
+        LocalDate orderDate = view.getOrderDateForViewing();
         int orderNumber = view.getOrderNumberChoice();
         Order existingOrder = orderDao.getOrderByNumberAndDate(orderNumber, orderDate);
 

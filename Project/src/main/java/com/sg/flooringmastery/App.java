@@ -23,7 +23,8 @@ public class App {
         FlooringMasteryServiceImpl service = new FlooringMasteryServiceImpl(productDao, taxDao);
 
         // Pass dependencies to the controller
-        FlooringMasteryController controller = new FlooringMasteryController(view, service, orderDao);
+        FlooringMasteryController controller = new FlooringMasteryController(view, service, orderDao, productDao, taxDao);
         controller.run();
     }
 }
+

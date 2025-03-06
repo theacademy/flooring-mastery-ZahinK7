@@ -1,5 +1,7 @@
 package com.sg.flooringmastery.ui;
 
+import com.sg.flooringmastery.dao.ProductDao;
+import com.sg.flooringmastery.dao.TaxDao;
 import com.sg.flooringmastery.dto.Order;
 
 import java.math.BigDecimal;
@@ -17,7 +19,7 @@ public class FlooringMasteryView {
         this.io = io;
     }
 
-    public int displayMenu(){
+    public int displayMenu() {
         io.print("  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
         io.print("  * <<Flooring Program>>");
         io.print("  * 1. Display Orders");
@@ -29,33 +31,22 @@ public class FlooringMasteryView {
         io.print("  *");
         io.print("  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * ");
 
-        return io.readInt("Please select from the above choices.", 1, 6);
+        return io.readInt("Please select from the above choices (1-6): ", 1, 6);
+    }
 
-    };
 
-    //Calculation for Area needs to be done
-    public Order getOrderDetails() {
-        // Get basic order details with minimal validation
-        int orderNumber = io.readInt("Please enter number: ");
-
-        // CUSTOMER NAME VALIDATION - focused validation area #1
+    public Order getOrderDetails(ProductDao productDao, TaxDao taxDao) {
+        int orderNumber = io.readInt("Please enter order number: ");
         String customerName = getValidCustomerName();
 
-        // Basic state input
-        String state = io.readString("Add state: ");
+        // Use the new validation methods
+        String state = getValidState(taxDao);
+        String productType = getValidProductType(productDao);
 
-        // Basic product type input
-        String productType = io.readString("What is your product: ");
-
-        // AREA VALIDATION - focused validation area #2
         BigDecimal area = getValidArea();
-
-        // DATE VALIDATION - focused validation area #3
         LocalDate orderDate = getValidOrderDate();
 
-        // Create and return the order
         Order currentOrder = new Order(orderNumber);
-        currentOrder.setOrderNumber(orderNumber);
         currentOrder.setCustomerName(customerName);
         currentOrder.setState(state);
         currentOrder.setProductType(productType);
@@ -64,6 +55,7 @@ public class FlooringMasteryView {
 
         return currentOrder;
     }
+
 
     private String getValidCustomerName() {
         boolean isValid = false;
@@ -130,24 +122,36 @@ public class FlooringMasteryView {
         while (!isValid) {
             try {
                 String dateInput = io.readString("Enter order date (YYYY-MM-DD): ");
-
-                // Try to parse the date
                 orderDate = LocalDate.parse(dateInput, formatter);
 
-                // Check if the date is not in the past
                 if (orderDate.isBefore(currentDate)) {
                     io.print("Error: Order date must be today or in the future. Please try again.");
-                    continue;
+                } else {
+                    isValid = true;
                 }
-
-                isValid = true;
             } catch (DateTimeParseException e) {
                 io.print("Error: Invalid date format. Please use YYYY-MM-DD format (e.g., 2025-03-15).");
             }
         }
-
         return orderDate;
     }
+    public LocalDate getOrderDateForViewing() {
+        boolean isValid = false;
+        LocalDate orderDate = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        while (!isValid) {
+            try {
+                String dateInput = io.readString("Enter order date (YYYY-MM-DD): ");
+                orderDate = LocalDate.parse(dateInput, formatter);
+                isValid = true; // Allow any date for viewing
+            } catch (DateTimeParseException e) {
+                io.print("Error: Invalid date format. Please use YYYY-MM-DD format (e.g., 2025-03-15).");
+            }
+        }
+        return orderDate;
+    }
+
 
 //    public LocalDate getOrderDate() {
 //        String dateString = io.readString("Enter order date (YYYY-MM-DD): ");
@@ -221,6 +225,39 @@ public class FlooringMasteryView {
             return null; // User canceled the edit
         }
     }
+
+    public String getValidState(TaxDao taxDao) {
+        String state = "";
+        boolean valid = false;
+
+        while (!valid) {
+            state = io.readString("Enter state abbreviation (e.g., TX, CA): ").toUpperCase();
+
+            if (taxDao.getTaxByState(state) != null) {
+                valid = true;
+            } else {
+                io.print("Invalid state. Please enter a valid state abbreviation from our service area.");
+            }
+        }
+        return state;
+    }
+
+    public String getValidProductType(ProductDao productDao) {
+        String productType = "";
+        boolean valid = false;
+
+        while (!valid) {
+            productType = io.readString("Enter product type (e.g., Carpet, Tile): ");
+
+            if (productDao.getProduct(productType) != null) {
+                valid = true;
+            } else {
+                io.print("Invalid product. Please enter a valid product from our inventory.");
+            }
+        }
+        return productType;
+    }
+
 
     public void displayOrders(List<Order> orders) {
         if (orders == null || orders.isEmpty()) {

@@ -21,24 +21,45 @@ public class UserIOConsoleImpl implements UserIO{
     @Override
     public int readInt(String prompt) {
         Scanner sc = new Scanner(System.in);
+        int num;
 
-        System.out.println(prompt);
-        return sc.nextInt();
+        while (true) {
+            System.out.println(prompt);
+            try {
+                num = sc.nextInt();
+                sc.nextLine(); // Consume newline character
+                return num;
+            } catch (Exception e) {
+                System.out.println("Invalid input! Please enter a valid number.");
+                sc.nextLine(); // Clear invalid input
+            }
+        }
     }
+
 
     @Override
     public int readInt(String prompt, int min, int max) {
         Scanner sc = new Scanner(System.in);
+        int num;
 
-        System.out.println(prompt);
-        int num = sc.nextInt();
+        while (true) {
+            System.out.println(prompt);
+            try {
+                num = sc.nextInt();
+                sc.nextLine(); // Consume newline character
 
-        while(num<min && num>max){
-            System.out.println("try again: ");
-            num = sc.nextInt();
+                if (num >= min && num <= max) {
+                    return num;
+                } else {
+                    System.out.println("Invalid choice! Please enter a number between " + min + " and " + max + ".");
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid input! Please enter a valid number.");
+                sc.nextLine(); // Clear invalid input
+            }
         }
-        return num;
     }
+
 
     @Override
     public BigDecimal readBigDecimal(String prompt) {
