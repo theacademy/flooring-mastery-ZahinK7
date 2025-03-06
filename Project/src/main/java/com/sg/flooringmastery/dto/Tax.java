@@ -7,10 +7,15 @@ public class Tax {
     private String stateName;
     private BigDecimal taxRate;
 
-
-    public Tax(){
-
+    // New Constructor
+    public Tax(String stateAbbreviation, String stateName, BigDecimal taxRate) {
+        this.stateAbbreviation = stateAbbreviation;
+        this.stateName = stateName;
+        this.taxRate = taxRate;
     }
+
+    // Default Constructor (Still Keeping It)
+    public Tax() { }
 
     public String getStateAbbreviation() {
         return stateAbbreviation;

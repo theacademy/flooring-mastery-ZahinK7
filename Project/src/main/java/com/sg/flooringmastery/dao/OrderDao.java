@@ -19,6 +19,8 @@ public interface OrderDao {
 
     Order editOrder(int orderNumber, LocalDate date, Order updatedOrder);
 
+    void exportAllOrders(LocalDate date);
+
     void saveOrder();
 }
 

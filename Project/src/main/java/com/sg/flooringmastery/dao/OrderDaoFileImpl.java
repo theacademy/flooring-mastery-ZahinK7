@@ -2,7 +2,11 @@ package com.sg.flooringmastery.dao;
 
 import com.sg.flooringmastery.dto.Order;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -75,14 +79,42 @@ public class OrderDaoFileImpl implements OrderDao {
         return null; // Order not found
     }
 
-    //To be implemented
-//    public Order editOrder(){
-//
-//
-//    }
+    @Override
+    public void exportAllOrders(LocalDate date) {
+        String fileName = "Orders_" + date.format(DateTimeFormatter.ofPattern("MMddyyyy")) + ".txt";
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
+            // Write header
+            writer.println("OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total");
+
+            // Write each order in correct format
+            for (Order order : getOrdersByDate(date)) {
+                writer.println(order.getOrderNumber() + "," +
+                        order.getCustomerName() + "," +
+                        order.getState() + "," +
+                        order.getTaxRate() + "," +
+                        order.getProductType() + "," +
+                        order.getArea() + "," +
+                        order.getCostPerSquareFoot() + "," +
+                        order.getLaborCostPerSquareFoot() + "," +
+                        order.getMaterialCost() + "," +
+                        order.getLaborCost() + "," +
+                        order.getTax() + "," +
+                        order.getTotal());
+            }
+
+            System.out.println("Export successful: " + fileName);
+        } catch (IOException e) {
+            System.out.println("Error exporting orders: " + e.getMessage());
+        }
+    }
+
 
     @Override
     public void saveOrder() {
-
+        for (Order order : orders.values()) {
+            exportAllOrders(order.getOrderDate()); // Save orders by date
+        }
     }
+
 }

@@ -10,7 +10,12 @@ import java.util.List;
 
 public class FlooringMasteryView {
 
-    private UserIO io = new UserIOConsoleImpl();
+    private UserIO io;
+
+    // Updated constructor to take UserIO as a parameter
+    public FlooringMasteryView(UserIO io) {
+        this.io = io;
+    }
 
     public int displayMenu(){
         io.print("  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
@@ -271,5 +276,24 @@ public class FlooringMasteryView {
     public void displayUnknownCommandBanner() {
         io.print("Unknown Command!!!");
     }
+
+    public void displayOrderSummary(Order order) {
+        io.print("=== Order Summary ===");
+        io.print("Order Number: " + order.getOrderNumber());
+        io.print("Customer Name: " + order.getCustomerName());
+        io.print("State: " + order.getState());
+        io.print("Tax Rate: " + order.getTaxRate() + "%");
+        io.print("Product Type: " + order.getProductType());
+        io.print("Area: " + order.getArea() + " sq ft");
+        io.print("Cost per Square Foot: $" + String.format("%.2f", order.getCostPerSquareFoot()));
+        io.print("Labor Cost per Square Foot: $" + String.format("%.2f", order.getLaborCostPerSquareFoot()));
+        io.print("Material Cost: $" + String.format("%.2f", order.getMaterialCost()));
+        io.print("Labor Cost: $" + String.format("%.2f", order.getLaborCost()));
+        io.print("Tax: $" + String.format("%.2f", order.getTax()));
+        io.print("Total: $" + String.format("%.2f", order.getTotal()));
+        io.print("=====================");
+    }
+
+
 
 }
