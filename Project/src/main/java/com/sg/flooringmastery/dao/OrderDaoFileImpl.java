@@ -25,10 +25,10 @@ public class OrderDaoFileImpl implements OrderDao {
 
     @Override
     public Order addOrder(int orderNumber, Order order) {
-        System.out.println("Attempting to add Order: " + orderNumber + " - " + order.getCustomerName());
+
         Order previousOrder = orders.put(orderNumber, order);
         if (previousOrder != null) {
-            System.out.println("⚠️ Warning: Order " + orderNumber + " was overwritten!");
+
         }
         return previousOrder;
     }

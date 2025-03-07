@@ -63,7 +63,14 @@ class OrderDaoFileImplTest {
         order1.setArea(new BigDecimal("120"));
         order1.setOrderDate(today);
 
+        orderDao.addOrder(orderNumber1, order1);
+
+        // Ensure second order gets a unique number
         int orderNumber2 = orderDao.generateOrderNumber(today);
+        if (orderNumber2 == orderNumber1) {
+            orderNumber2++; // Ensure different order numbers
+        }
+
         Order order2 = new Order(orderNumber2);
         order2.setCustomerName("Bob");
         order2.setState("TX");
@@ -72,10 +79,9 @@ class OrderDaoFileImplTest {
         order2.setArea(new BigDecimal("200"));
         order2.setOrderDate(today);
 
-        orderDao.addOrder(orderNumber1, order1);
         orderDao.addOrder(orderNumber2, order2);
 
-        // Debugging: Print all orders in the DAO
+        // Debugging: Print all orders in DAO
         System.out.println("All orders stored in DAO:");
         List<Order> allOrders = orderDao.getOrdersByDate(today);
         for (Order order : allOrders) {
