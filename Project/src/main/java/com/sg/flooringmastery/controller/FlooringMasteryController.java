@@ -1,21 +1,21 @@
 package com.sg.flooringmastery.controller;
 
+import com.sg.flooringmastery.dao.FlooringMasteryDaoException;
 import com.sg.flooringmastery.dao.OrderDao;
 import com.sg.flooringmastery.dao.ProductDao;
 import com.sg.flooringmastery.dao.TaxDao;
 import com.sg.flooringmastery.dto.Order;
-import com.sg.flooringmastery.dto.Tax;
+import com.sg.flooringmastery.service.FlooringMasteryServiceException;
 import com.sg.flooringmastery.service.FlooringMasteryServiceImpl;
 import com.sg.flooringmastery.ui.FlooringMasteryView;
 import com.sg.flooringmastery.ui.UserIO;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Controller  // Marks this as a Spring-managed Controller
+@Controller
 public class FlooringMasteryController {
 
     private final UserIO io;
@@ -25,7 +25,7 @@ public class FlooringMasteryController {
     private final ProductDao productDao;
     private final TaxDao taxDao;
 
-    @Autowired  // Spring will automatically inject dependencies
+    @Autowired
     public FlooringMasteryController(UserIO io, FlooringMasteryView view, FlooringMasteryServiceImpl service,
                                      OrderDao orderDao, ProductDao productDao, TaxDao taxDao) {
         this.io = io;
@@ -34,10 +34,7 @@ public class FlooringMasteryController {
         this.orderDao = orderDao;
         this.productDao = productDao;
         this.taxDao = taxDao;
-
     }
-
-
 
     public void run() {
         boolean keepGoing = true;
@@ -76,29 +73,20 @@ public class FlooringMasteryController {
 
     private void createOrder() {
         view.displayAddOrderBanner();
-
-        // Get the order date first
         LocalDate orderDate = view.getValidOrderDate();
-
-        // Generate the order number based on existing orders for that date
         int orderNumber = orderDao.generateOrderNumber(orderDate);
-
-        // Get order details from the user (without order number)
         Order newOrder = view.getOrderDetails(productDao, taxDao);
-
-        // Set the generated order number and order date
         newOrder.setOrderNumber(orderNumber);
         newOrder.setOrderDate(orderDate);
 
-        // Populate costs before calculations
-        service.populateOrderCosts(newOrder);
-
-        // Save order
-        orderDao.addOrder(newOrder.getOrderNumber(), newOrder);
-        view.displayOrderSummary(newOrder);
+        try {
+            service.populateOrderCosts(newOrder);
+            orderDao.addOrder(newOrder.getOrderNumber(), newOrder);
+            view.displayOrderSummary(newOrder);
+        } catch (FlooringMasteryServiceException e) {
+            view.displayErrorMessage("Error creating order: " + e.getMessage());
+        }
     }
-
-
 
     private void listOrders() {
         view.displayDisplayAllBanner();
@@ -125,9 +113,13 @@ public class FlooringMasteryController {
             Order updatedOrder = view.editOrderDetails(existingOrder);
 
             if (updatedOrder != null) {
-                service.populateOrderCosts(updatedOrder);
-                orderDao.editOrder(orderNumber, orderDate, updatedOrder);
-                view.displayEditSuccessBanner();
+                try {
+                    service.populateOrderCosts(updatedOrder);
+                    orderDao.editOrder(orderNumber, orderDate, updatedOrder);
+                    view.displayEditSuccessBanner();
+                } catch (FlooringMasteryServiceException e) {
+                    view.displayErrorMessage("Error editing order: " + e.getMessage());
+                }
             } else {
                 io.print("Edit Cancelled");
             }
@@ -138,9 +130,14 @@ public class FlooringMasteryController {
 
     private void exportOrders() {
         LocalDate date = view.getValidOrderDate();
-        orderDao.exportAllOrders(date);
-        io.print("Orders exported successfully for " + date);
+        try {
+            orderDao.exportAllOrders(date);
+            io.print("Orders exported successfully for " + date);
+        } catch (FlooringMasteryDaoException e) {
+            view.displayErrorMessage("Error exporting orders: " + e.getMessage());
+        }
     }
+
 
     private void unknownCommand() {
         view.displayUnknownCommandBanner();

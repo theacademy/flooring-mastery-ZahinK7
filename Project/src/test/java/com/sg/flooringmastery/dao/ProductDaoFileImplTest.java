@@ -14,8 +14,13 @@ class ProductDaoFileImplTest {
 
     @BeforeEach
     void setUp() {
-        productDao = new ProductDaoFileImpl(); // Initialize DAO before each test
+        try {
+            productDao = new ProductDaoFileImpl();
+        } catch (FlooringMasteryDaoException e) {
+            fail("Exception thrown during setup: " + e.getMessage());
+        }
     }
+
 
     @Test
     void testGetProduct_validProduct() {

@@ -11,25 +11,23 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-@Repository  // Marks this as a Spring DAO component
+@Repository
 public class TaxDaoFileImpl implements TaxDao {
 
-    private static final String TAX_FILE = "Data/Taxes.txt";  // Ensure correct path
+    private static final String TAX_FILE = "Data/Taxes.txt";
     private final Map<String, Tax> taxes = new HashMap<>();
 
-    public TaxDaoFileImpl() {
-
+    public TaxDaoFileImpl() throws FlooringMasteryDaoException {
         loadTaxes();
     }
 
     @PostConstruct
-    private void loadTaxes() {
+    private void loadTaxes() throws FlooringMasteryDaoException {
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(TAX_FILE);
              BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
 
             if (inputStream == null) {
-                System.out.println("ERROR: Tax file NOT FOUND! Ensure it's inside `target/classes/Data/`.");
-                return;
+                throw new FlooringMasteryDaoException("Tax file NOT FOUND! Ensure it's inside `target/classes/Data/`.");
             }
 
             br.readLine(); // Skip header row
@@ -46,36 +44,27 @@ public class TaxDaoFileImpl implements TaxDao {
 
                     taxes.put(stateAbbr, new Tax(stateAbbr, stateName, taxRate));
                 } catch (NumberFormatException e) {
-                    // Skipping invalid tax rate values
+                    throw new FlooringMasteryDaoException("Invalid tax rate value in Taxes.txt: " + line, e);
                 }
             }
 
             if (taxes.isEmpty()) {
-                System.out.println("ERROR: No valid tax data was loaded. Check Taxes.txt format.");
+                throw new FlooringMasteryDaoException("No valid tax data was loaded. Check Taxes.txt format.");
             }
 
         } catch (Exception e) {
-            System.out.println("ERROR loading tax data: " + e.getMessage());
+            throw new FlooringMasteryDaoException("Error loading tax data: " + e.getMessage(), e);
         }
     }
-
-
 
     @Override
     public Tax getTaxByState(String stateAbbr) {
         if (stateAbbr == null || stateAbbr.trim().isEmpty()) {
-            System.out.println("ERROR: Empty state input!");
             return null;
         }
 
-        stateAbbr = stateAbbr.trim().toUpperCase().replaceAll("[^A-Z]", ""); // Normalize input
-        System.out.println("Looking up tax info for state: " + stateAbbr);
-
-        Tax tax = taxes.get(stateAbbr);
-        if (tax == null) {
-            System.out.println("ERROR: State '" + stateAbbr + "' not found in tax data.");
-        }
-        return tax;
+        stateAbbr = stateAbbr.trim().toUpperCase().replaceAll("[^A-Z]", "");
+        return taxes.get(stateAbbr);
     }
 
     @Override

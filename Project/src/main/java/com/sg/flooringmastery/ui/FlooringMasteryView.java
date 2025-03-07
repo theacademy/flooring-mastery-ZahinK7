@@ -321,6 +321,10 @@ public class FlooringMasteryView {
         io.print("=====================");
     }
 
+    public void displayErrorMessage(String errorMessage) {
+        io.print("ERROR: " + errorMessage);
+    }
+
 
 
 }

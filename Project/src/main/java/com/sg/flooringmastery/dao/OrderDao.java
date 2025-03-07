@@ -9,20 +9,17 @@ public interface OrderDao {
 
     Order addOrder(int orderNumber, Order order);
 
-
-    List<Order> getOrdersByDate(LocalDate Date);
+    List<Order> getOrdersByDate(LocalDate date);
 
     Order getOrderByNumberAndDate(int orderNumber, LocalDate date);
 
     int generateOrderNumber(LocalDate date);
 
-    Order removeOrder(int orderNumber, LocalDate Date);
+    Order removeOrder(int orderNumber, LocalDate date);
 
     Order editOrder(int orderNumber, LocalDate date, Order updatedOrder);
 
-    void exportAllOrders(LocalDate date);
+    void exportAllOrders(LocalDate date) throws FlooringMasteryDaoException;
 
-    void saveOrder();
+    void saveOrder() throws FlooringMasteryDaoException;
 }
-
-

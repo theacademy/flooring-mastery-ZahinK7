@@ -14,7 +14,11 @@ class TaxDaoFileImplTest {
 
     @BeforeEach
     void setUp() {
-        taxDao = new TaxDaoFileImpl(); // Initialize DAO before each test
+        try {
+            taxDao = new TaxDaoFileImpl();
+        } catch (FlooringMasteryDaoException e) {
+            fail("Exception thrown during setup: " + e.getMessage());
+        }
     }
 
     @Test

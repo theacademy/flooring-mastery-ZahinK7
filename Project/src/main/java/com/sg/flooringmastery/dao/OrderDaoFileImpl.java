@@ -20,25 +20,16 @@ public class OrderDaoFileImpl implements OrderDao {
     private Map<Integer, Order> orders = new HashMap<>();
 
     public OrderDaoFileImpl() {
-
     }
 
     @Override
     public Order addOrder(int orderNumber, Order order) {
-
-        Order previousOrder = orders.put(orderNumber, order);
-        if (previousOrder != null) {
-
-        }
-        return previousOrder;
+        return orders.put(orderNumber, order);
     }
-
-
 
     @Override
     public List<Order> getOrdersByDate(LocalDate date) {
         List<Order> ordersOnDate = new ArrayList<>();
-
         for (Order order : orders.values()) {
             if (order.getOrderDate().equals(date)) {
                 ordersOnDate.add(order);
@@ -59,22 +50,15 @@ public class OrderDaoFileImpl implements OrderDao {
 
     @Override
     public int generateOrderNumber(LocalDate date) {
-        // Get all orders for the given date
         List<Order> ordersOnDate = getOrdersByDate(date);
-
         if (ordersOnDate.isEmpty()) {
-            return 1; // If no orders exist for that date, start with 1
+            return 1;
         }
-
-        // Find the highest existing order number for that date
-        int maxOrderNumber = ordersOnDate.stream()
+        return ordersOnDate.stream()
                 .mapToInt(Order::getOrderNumber)
                 .max()
-                .orElse(0);
-
-        return maxOrderNumber + 1; // Ensure unique order numbers
+                .orElse(0) + 1;
     }
-
 
     @Override
     public Order removeOrder(int orderNumber, LocalDate date) {
@@ -97,14 +81,13 @@ public class OrderDaoFileImpl implements OrderDao {
     }
 
     @Override
-    public void exportAllOrders(LocalDate date) {
-        String directory = "Project/SampleFileData/SampleFileData/Orders/";  // Set the correct path
+    public void exportAllOrders(LocalDate date) throws FlooringMasteryDaoException {
+        String directory = "Project/SampleFileData/SampleFileData/Orders/";
         String fileName = directory + "Orders_" + date.format(DateTimeFormatter.ofPattern("MMddyyyy")) + ".txt";
 
-        // Ensure the directory exists
         File folder = new File(directory);
         if (!folder.exists()) {
-            folder.mkdirs();  // Create directory if it doesn’t exist
+            folder.mkdirs();
         }
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
@@ -125,17 +108,15 @@ public class OrderDaoFileImpl implements OrderDao {
                         order.getTotal());
             }
 
-            System.out.println("Export successful: " + fileName);
         } catch (IOException e) {
-            System.out.println("Error exporting orders: " + e.getMessage());
+            throw new FlooringMasteryDaoException("Error exporting orders to file: " + fileName, e);
         }
     }
 
-
     @Override
-    public void saveOrder() {
+    public void saveOrder() throws FlooringMasteryDaoException {
         for (Order order : orders.values()) {
-            exportAllOrders(order.getOrderDate()); // Save orders by date
+            exportAllOrders(order.getOrderDate());
         }
     }
 }

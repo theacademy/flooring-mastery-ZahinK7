@@ -1,5 +1,4 @@
 package com.sg.flooringmastery.service;
-
 import com.sg.flooringmastery.dao.OrderDao;
 import com.sg.flooringmastery.dao.ProductDao;
 import com.sg.flooringmastery.dao.TaxDao;
@@ -14,14 +13,14 @@ import java.time.LocalDate;
 import java.util.regex.Pattern;
 import java.math.RoundingMode;
 
-@Service  // Marks this class as a Spring-managed Service
+@Service
 public class FlooringMasteryServiceImpl implements FlooringMasteryService {
 
     private final ProductDao productDao;
     private final TaxDao taxDao;
     private final OrderDao orderDao;
 
-    @Autowired  // Spring automatically injects dependencies
+    @Autowired
     public FlooringMasteryServiceImpl(ProductDao productDao, TaxDao taxDao, OrderDao orderDao) {
         this.productDao = productDao;
         this.taxDao = taxDao;
@@ -35,7 +34,7 @@ public class FlooringMasteryServiceImpl implements FlooringMasteryService {
         }
         return order.getArea()
                 .multiply(order.getCostPerSquareFoot())
-                .setScale(2, RoundingMode.HALF_UP);  // Round to 2 decimal places
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
     @Override
@@ -61,7 +60,7 @@ public class FlooringMasteryServiceImpl implements FlooringMasteryService {
     }
 
     public boolean validateOrderDate(Order order) {
-        return order.getOrderDate().isAfter(LocalDate.now());
+        return !order.getOrderDate().isBefore(LocalDate.now());
     }
 
     public boolean validateCustomerName(Order order) {
@@ -78,24 +77,27 @@ public class FlooringMasteryServiceImpl implements FlooringMasteryService {
         return validateOrderDate(order) && validateCustomerName(order) && validateArea(order);
     }
 
-    public void populateOrderCosts(Order order) {
-        // Fetch tax data
+    public void populateOrderCosts(Order order) throws FlooringMasteryServiceException {
+
         Tax tax = taxDao.getTaxByState(order.getState());
-        if (tax != null) {
-            order.setTaxRate(tax.getTaxRate());
+        if (tax == null) {
+            throw new FlooringMasteryServiceException("Error: State '" + order.getState() + "' not found in tax data.");
         }
+        order.setTaxRate(tax.getTaxRate());
 
-        // Fetch product data
+
         Product product = productDao.getProduct(order.getProductType());
-        if (product != null) {
-            order.setCostPerSquareFoot(product.getCostPerSquareFoot());
-            order.setLaborCostPerSquareFoot(product.getLaborCostPerSquareFoot());
+        if (product == null) {
+            throw new FlooringMasteryServiceException("Error: Product type '" + order.getProductType() + "' not found.");
         }
+        order.setCostPerSquareFoot(product.getCostPerSquareFoot());
+        order.setLaborCostPerSquareFoot(product.getLaborCostPerSquareFoot());
 
-        // Recalculate order costs with rounding
+
         order.setMaterialCost(calculateMaterialCost(order));
         order.setLaborCost(calculateLaborCost(order));
         order.setTax(calculateTax(order));
         order.setTotal(calculateTotalCost(order));
     }
+
 }
