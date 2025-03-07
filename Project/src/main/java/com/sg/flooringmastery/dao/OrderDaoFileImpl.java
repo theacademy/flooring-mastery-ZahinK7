@@ -2,7 +2,6 @@ package com.sg.flooringmastery.dao;
 
 import com.sg.flooringmastery.dto.Order;
 import org.springframework.stereotype.Repository;
-import jakarta.annotation.PostConstruct;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -15,24 +14,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Repository  // Marks this as a Spring-managed DAO component
+@Repository
 public class OrderDaoFileImpl implements OrderDao {
 
     private Map<Integer, Order> orders = new HashMap<>();
 
     public OrderDaoFileImpl() {
-        // No need to manually call loadOrders(), we will use @PostConstruct if needed
+
     }
 
     @Override
     public Order addOrder(int orderNumber, Order order) {
-        return orders.put(orderNumber, order);
+        System.out.println("Attempting to add Order: " + orderNumber + " - " + order.getCustomerName());
+        Order previousOrder = orders.put(orderNumber, order);
+        if (previousOrder != null) {
+            System.out.println("⚠️ Warning: Order " + orderNumber + " was overwritten!");
+        }
+        return previousOrder;
     }
 
-    @Override
-    public Order getOrder(int orderNumber) {
-        return null;
-    }
+
 
     @Override
     public List<Order> getOrdersByDate(LocalDate date) {
@@ -55,6 +56,25 @@ public class OrderDaoFileImpl implements OrderDao {
         }
         return null;
     }
+
+    @Override
+    public int generateOrderNumber(LocalDate date) {
+        // Get all orders for the given date
+        List<Order> ordersOnDate = getOrdersByDate(date);
+
+        if (ordersOnDate.isEmpty()) {
+            return 1; // If no orders exist for that date, start with 1
+        }
+
+        // Find the highest existing order number for that date
+        int maxOrderNumber = ordersOnDate.stream()
+                .mapToInt(Order::getOrderNumber)
+                .max()
+                .orElse(0);
+
+        return maxOrderNumber + 1; // Ensure unique order numbers
+    }
+
 
     @Override
     public Order removeOrder(int orderNumber, LocalDate date) {

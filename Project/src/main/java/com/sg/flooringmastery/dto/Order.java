@@ -20,9 +20,14 @@ public class Order {
     private BigDecimal total;
     private LocalDate orderDate;
 
-    public Order (int orderNumber){
-        this.orderNumber=orderNumber;
+
+    public Order() {
     }
+
+    public Order(int orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
 
     public int getOrderNumber() {
         return orderNumber;

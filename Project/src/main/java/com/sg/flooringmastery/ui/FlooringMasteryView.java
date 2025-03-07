@@ -37,27 +37,21 @@ public class FlooringMasteryView {
         return io.readInt("Please select from the above choices (1-6): ", 1, 6);
     }
 
-
     public Order getOrderDetails(ProductDao productDao, TaxDao taxDao) {
-        int orderNumber = io.readInt("Please enter order number: ");
         String customerName = getValidCustomerName();
-
-        // Use the new validation methods
         String state = getValidState(taxDao);
         String productType = getValidProductType(productDao);
-
         BigDecimal area = getValidArea();
-        LocalDate orderDate = getValidOrderDate();
-
-        Order currentOrder = new Order(orderNumber);
+        Order currentOrder = new Order();
         currentOrder.setCustomerName(customerName);
         currentOrder.setState(state);
         currentOrder.setProductType(productType);
         currentOrder.setArea(area);
-        currentOrder.setOrderDate(orderDate);
 
         return currentOrder;
     }
+
+
 
 
     private String getValidCustomerName() {

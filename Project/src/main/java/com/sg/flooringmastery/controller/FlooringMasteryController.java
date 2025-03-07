@@ -77,10 +77,18 @@ public class FlooringMasteryController {
     private void createOrder() {
         view.displayAddOrderBanner();
 
+        // Get the order date first
+        LocalDate orderDate = view.getValidOrderDate();
 
+        // Generate the order number based on existing orders for that date
+        int orderNumber = orderDao.generateOrderNumber(orderDate);
 
-        // Pass ProductDao & TaxDao to enforce validation
+        // Get order details from the user (without order number)
         Order newOrder = view.getOrderDetails(productDao, taxDao);
+
+        // Set the generated order number and order date
+        newOrder.setOrderNumber(orderNumber);
+        newOrder.setOrderDate(orderDate);
 
         // Populate costs before calculations
         service.populateOrderCosts(newOrder);
@@ -89,6 +97,8 @@ public class FlooringMasteryController {
         orderDao.addOrder(newOrder.getOrderNumber(), newOrder);
         view.displayOrderSummary(newOrder);
     }
+
+
 
     private void listOrders() {
         view.displayDisplayAllBanner();
