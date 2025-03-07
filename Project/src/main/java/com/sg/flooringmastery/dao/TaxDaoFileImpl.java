@@ -63,9 +63,18 @@ public class TaxDaoFileImpl implements TaxDao {
             return null;
         }
 
-        stateAbbr = stateAbbr.trim().toUpperCase().replaceAll("[^A-Z]", "");
+        stateAbbr = stateAbbr.trim(); // Trim spaces first
+
+        // Reject inputs that contain anything other than letters (prevents "1TX", "T@X", "OH-IO")
+        if (!stateAbbr.matches("^[A-Za-z]+$")) {
+            return null;
+        }
+
+        stateAbbr = stateAbbr.toUpperCase();
         return taxes.get(stateAbbr);
     }
+
+
 
     @Override
     public BigDecimal getTaxRate(String stateAbbr) {

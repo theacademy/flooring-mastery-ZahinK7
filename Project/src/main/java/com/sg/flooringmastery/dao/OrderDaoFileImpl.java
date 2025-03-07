@@ -24,8 +24,12 @@ public class OrderDaoFileImpl implements OrderDao {
 
     @Override
     public Order addOrder(int orderNumber, Order order) {
+        if (order.getOrderDate() == null) {
+            throw new IllegalArgumentException("Order date must be set before adding the order.");
+        }
         return orders.put(orderNumber, order);
     }
+
 
     @Override
     public List<Order> getOrdersByDate(LocalDate date) {

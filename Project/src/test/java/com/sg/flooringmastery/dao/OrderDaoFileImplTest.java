@@ -50,6 +50,19 @@ class OrderDaoFileImplTest {
     }
 
     @Test
+    void testGetOrdersByDate_emptyDAO() {
+        // Arrange
+        LocalDate today = LocalDate.now();
+
+        // Act
+        List<Order> orders = orderDao.getOrdersByDate(today);
+
+        // Assert
+        assertNotNull(orders, "Returned list should not be null");
+        assertTrue(orders.isEmpty(), "List should be empty when no orders exist for a date");
+    }
+
+    @Test
     void testGetOrdersByDate() {
         // Arrange
         LocalDate today = LocalDate.now();
@@ -62,15 +75,9 @@ class OrderDaoFileImplTest {
         order1.setProductType("Tile");
         order1.setArea(new BigDecimal("120"));
         order1.setOrderDate(today);
-
         orderDao.addOrder(orderNumber1, order1);
 
-        // Ensure second order gets a unique number
         int orderNumber2 = orderDao.generateOrderNumber(today);
-        if (orderNumber2 == orderNumber1) {
-            orderNumber2++; // Ensure different order numbers
-        }
-
         Order order2 = new Order(orderNumber2);
         order2.setCustomerName("Bob");
         order2.setState("TX");
@@ -78,15 +85,7 @@ class OrderDaoFileImplTest {
         order2.setProductType("Laminate");
         order2.setArea(new BigDecimal("200"));
         order2.setOrderDate(today);
-
         orderDao.addOrder(orderNumber2, order2);
-
-        // Debugging: Print all orders in DAO
-        System.out.println("All orders stored in DAO:");
-        List<Order> allOrders = orderDao.getOrdersByDate(today);
-        for (Order order : allOrders) {
-            System.out.println(order.getOrderNumber() + " - " + order.getCustomerName());
-        }
 
         // Act
         List<Order> orders = orderDao.getOrdersByDate(today);
@@ -95,7 +94,6 @@ class OrderDaoFileImplTest {
         assertNotNull(orders, "Order list should not be null");
         assertEquals(2, orders.size(), "There should be exactly 2 orders for today");
     }
-
 
     @Test
     void testRemoveOrder() {
@@ -116,6 +114,15 @@ class OrderDaoFileImplTest {
         assertNotNull(removedOrder, "Removed order should not be null");
         assertEquals(orderNumber, removedOrder.getOrderNumber(), "Order numbers should match");
         assertNull(shouldBeNull, "Order should no longer exist after removal");
+    }
+
+    @Test
+    void testRemoveNonExistentOrder() {
+        // Act
+        Order removedOrder = orderDao.removeOrder(999, LocalDate.now());
+
+        // Assert
+        assertNull(removedOrder, "Removing a non-existent order should return null");
     }
 
     @Test
@@ -146,5 +153,46 @@ class OrderDaoFileImplTest {
         assertNotNull(retrievedOrder, "Updated order should not be null");
         assertEquals("Updated Name", retrievedOrder.getCustomerName(), "Customer name should be updated");
         assertEquals("Tile", retrievedOrder.getProductType(), "Product type should be updated");
+    }
+
+    @Test
+    void testEditNonExistentOrder() {
+        // Arrange
+        LocalDate today = LocalDate.now();
+        Order updatedOrder = new Order(999);
+        updatedOrder.setCustomerName("Non-Existent Order");
+
+        // Act
+        Order result = orderDao.editOrder(999, today, updatedOrder);
+
+        // Assert
+        assertNull(result, "Editing a non-existent order should return null");
+    }
+
+    @Test
+    void testGenerateOrderNumber() {
+        // Arrange
+        LocalDate today = LocalDate.now();
+
+        // Act
+        int firstOrderNumber = orderDao.generateOrderNumber(today);
+        Order firstOrder = new Order(firstOrderNumber);
+        firstOrder.setOrderDate(today); // ✅ Fix: Set order date
+        orderDao.addOrder(firstOrderNumber, firstOrder);
+
+        int secondOrderNumber = orderDao.generateOrderNumber(today);
+        Order secondOrder = new Order(secondOrderNumber);
+        secondOrder.setOrderDate(today); // ✅ Fix: Set order date
+        orderDao.addOrder(secondOrderNumber, secondOrder);
+
+        // Assert
+        assertEquals(1, firstOrderNumber, "First order number should be 1");
+        assertEquals(2, secondOrderNumber, "Second order number should be 2");
+    }
+
+
+    @Test
+    void testSaveOrderDoesNotThrowException() {
+        assertDoesNotThrow(() -> orderDao.saveOrder(), "saveOrder() should not throw an exception");
     }
 }

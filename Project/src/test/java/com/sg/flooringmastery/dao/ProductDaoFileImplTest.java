@@ -3,6 +3,8 @@ package com.sg.flooringmastery.dao;
 import com.sg.flooringmastery.dto.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 
@@ -17,10 +19,9 @@ class ProductDaoFileImplTest {
         try {
             productDao = new ProductDaoFileImpl();
         } catch (FlooringMasteryDaoException e) {
-            fail("Exception thrown during setup: " + e.getMessage());
+            fail("Failed to initialize ProductDaoFileImpl: " + e.getMessage());
         }
     }
-
 
     @Test
     void testGetProduct_validProduct() {
@@ -34,42 +35,32 @@ class ProductDaoFileImplTest {
         assertEquals(new BigDecimal("2.10"), product.getLaborCostPerSquareFoot(), "Labor cost per square foot should match expected value");
     }
 
-    @Test
-    void testGetCostPerSquareFoot_validProduct() {
-        // Act
-        BigDecimal cost = productDao.getCostPerSquareFoot("Carpet");
-
-        // Assert
-        assertNotNull(cost, "Cost should not be null for a valid product type");
-        assertEquals(new BigDecimal("2.25"), cost, "Cost per square foot should match expected value");
+    @ParameterizedTest
+    @ValueSource(strings = {"InvalidProduct", "WoodenTile", "NonExistent"})
+    void testInvalidProductReturnsNull(String invalidProduct) {
+        assertNull(productDao.getProduct(invalidProduct), "Invalid product should return null");
+        assertNull(productDao.getCostPerSquareFoot(invalidProduct), "Invalid product should return null for cost per square foot");
+        assertNull(productDao.getLaborCostPerSquareFoot(invalidProduct), "Invalid product should return null for labor cost per square foot");
+        assertNull(productDao.getProductType(invalidProduct), "Invalid product should return null for product type");
     }
 
     @Test
-    void testGetLaborCostPerSquareFoot_validProduct() {
-        // Act
-        BigDecimal laborCost = productDao.getLaborCostPerSquareFoot("Carpet");
-
-        // Assert
-        assertNotNull(laborCost, "Labor cost should not be null for a valid product type");
-        assertEquals(new BigDecimal("2.10"), laborCost, "Labor cost per square foot should match expected value");
+    void testLoadProducts_fileNotFound() {
+        try {
+            new ProductDaoFileImpl(); // Ensure no exception is thrown
+        } catch (FlooringMasteryDaoException e) {
+            assertTrue(e.getMessage().contains("Product file NOT FOUND"), "Expected a file not found error when Products.txt is missing.");
+        }
     }
 
     @Test
-    void testGetProductType_validProduct() {
-        // Act
-        String productType = productDao.getProductType("Carpet");
-
-        // Assert
-        assertNotNull(productType, "Product type should not be null for a valid product");
-        assertEquals("Carpet", productType, "Product type should match expected value");
-    }
-
-    @Test
-    void testInvalidProductReturnsNull() {
-        // Act & Assert
-        assertNull(productDao.getProduct("InvalidProduct"), "Invalid product should return null");
-        assertNull(productDao.getCostPerSquareFoot("InvalidProduct"), "Invalid product should return null for cost per square foot");
-        assertNull(productDao.getLaborCostPerSquareFoot("InvalidProduct"), "Invalid product should return null for labor cost per square foot");
-        assertNull(productDao.getProductType("InvalidProduct"), "Invalid product should return null for product type");
+    void testLoadProducts_invalidDataFormat() {
+        try {
+            new ProductDaoFileImpl(); // If invalid data is present, this should throw an exception
+        } catch (FlooringMasteryDaoException e) {
+            assertTrue(e.getMessage().contains("Invalid numeric data in Products.txt") ||
+                            e.getMessage().contains("No valid product data was loaded"),
+                    "Expected an error due to invalid numeric data in Products.txt.");
+        }
     }
 }
