@@ -1,5 +1,4 @@
 package com.sg.flooringmastery.ui;
-
 import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.Scanner;

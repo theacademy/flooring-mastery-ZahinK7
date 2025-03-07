@@ -1,5 +1,4 @@
 package com.sg.flooringmastery.dto;
-
 import java.math.BigDecimal;
 
 public class Product {

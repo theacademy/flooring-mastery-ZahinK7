@@ -1,5 +1,4 @@
 package com.sg.flooringmastery.ui;
-
 import java.math.BigDecimal;
 
 public interface UserIO {

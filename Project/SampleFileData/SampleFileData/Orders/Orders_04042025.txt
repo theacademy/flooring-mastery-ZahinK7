@@ -1,2 +1,0 @@
-OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
-1,WER,CA,25.00,Carpet,100,2.25,2.10,225.00,210.00,108.75,543.75
