@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.Scanner;
 
-@Component  // This makes Spring recognize it as a bean
+@Component
 public class UserIOConsoleImpl implements UserIO {
 
     @Override
@@ -27,11 +27,11 @@ public class UserIOConsoleImpl implements UserIO {
             System.out.println(prompt);
             try {
                 num = sc.nextInt();
-                sc.nextLine(); // Consume newline character
+                sc.nextLine();
                 return num;
             } catch (Exception e) {
                 System.out.println("Invalid input! Please enter a valid number.");
-                sc.nextLine(); // Clear invalid input
+                sc.nextLine();
             }
         }
     }
@@ -44,7 +44,7 @@ public class UserIOConsoleImpl implements UserIO {
             System.out.println(prompt);
             try {
                 num = sc.nextInt();
-                sc.nextLine(); // Consume newline character
+                sc.nextLine();
                 if (num >= min && num <= max) {
                     return num;
                 } else {
@@ -52,7 +52,7 @@ public class UserIOConsoleImpl implements UserIO {
                 }
             } catch (Exception e) {
                 System.out.println("Invalid input! Please enter a valid number.");
-                sc.nextLine(); // Clear invalid input
+                sc.nextLine();
             }
         }
     }

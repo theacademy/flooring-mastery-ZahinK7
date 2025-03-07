@@ -16,7 +16,7 @@ public class ProductDaoFileImpl implements ProductDao {
     private Map<String, Product> products = new HashMap<>();
 
     public ProductDaoFileImpl() throws FlooringMasteryDaoException {
-        loadProducts(); // Now throws an exception if loading fails
+        loadProducts();
     }
 
     @PostConstruct
@@ -28,7 +28,7 @@ public class ProductDaoFileImpl implements ProductDao {
                 throw new FlooringMasteryDaoException("Product file NOT FOUND! Ensure it's inside `target/classes/Data/`.");
             }
 
-            br.readLine(); // Skip header row
+            br.readLine();
 
             String line;
             while ((line = br.readLine()) != null) {

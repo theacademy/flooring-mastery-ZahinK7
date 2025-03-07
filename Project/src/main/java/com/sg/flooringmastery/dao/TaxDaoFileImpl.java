@@ -30,12 +30,12 @@ public class TaxDaoFileImpl implements TaxDao {
                 throw new FlooringMasteryDaoException("Tax file NOT FOUND! Ensure it's inside `target/classes/Data/`.");
             }
 
-            br.readLine(); // Skip header row
+            br.readLine();
 
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length != 3) continue; // Skip invalid lines
+                if (parts.length != 3) continue;
 
                 try {
                     String stateAbbr = parts[0].trim().toUpperCase().replaceAll("[^A-Z]", "");
@@ -63,9 +63,9 @@ public class TaxDaoFileImpl implements TaxDao {
             return null;
         }
 
-        stateAbbr = stateAbbr.trim(); // Trim spaces first
+        stateAbbr = stateAbbr.trim();
 
-        // Reject inputs that contain anything other than letters (prevents "1TX", "T@X", "OH-IO")
+
         if (!stateAbbr.matches("^[A-Za-z]+$")) {
             return null;
         }

@@ -25,12 +25,12 @@ class FlooringMasteryIntegrationTest {
     @BeforeEach
     void setUp() {
         try {
-            // Use REAL DAOs that load actual data
+
             productDao = new ProductDaoFileImpl();
             taxDao = new TaxDaoFileImpl();
             orderDao = new OrderDaoFileImpl();
 
-            // Use the real service implementation
+
             service = new FlooringMasteryServiceImpl(productDao, taxDao, orderDao);
         } catch (Exception e) {
             fail("Failed to initialize DAOs due to exception: " + e.getMessage());
@@ -40,8 +40,8 @@ class FlooringMasteryIntegrationTest {
     @Test
     void testPopulateOrderCosts_RealData() {
         Order order = new Order(1);
-        order.setState("TX"); // Must be in Taxes.txt
-        order.setProductType("Carpet"); // Must be in Products.txt
+        order.setState("TX");
+        order.setProductType("Carpet");
         order.setArea(new BigDecimal("100"));
 
         assertDoesNotThrow(() -> service.populateOrderCosts(order));
@@ -54,7 +54,7 @@ class FlooringMasteryIntegrationTest {
     @Test
     void testPopulateOrderCosts_InvalidState() {
         Order order = new Order(1);
-        order.setState("INVALID_STATE"); // Should not exist in Taxes.txt
+        order.setState("INVALID_STATE");
         order.setProductType("Carpet");
         order.setArea(new BigDecimal("100"));
 
@@ -66,7 +66,7 @@ class FlooringMasteryIntegrationTest {
     void testPopulateOrderCosts_InvalidProduct() {
         Order order = new Order(1);
         order.setState("TX");
-        order.setProductType("INVALID_PRODUCT"); // Should not exist in Products.txt
+        order.setProductType("INVALID_PRODUCT");
         order.setArea(new BigDecimal("100"));
 
         assertThrows(FlooringMasteryServiceException.class, () -> service.populateOrderCosts(order),

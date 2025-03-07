@@ -16,14 +16,14 @@ class OrderDaoFileImplTest {
 
     @BeforeEach
     void setUp() {
-        orderDao = new OrderDaoFileImpl(); // Initialize before each test
+        orderDao = new OrderDaoFileImpl();
     }
 
     @Test
     void testAddAndGetOrder() {
         // Arrange
         LocalDate today = LocalDate.now();
-        int orderNumber = orderDao.generateOrderNumber(today); // Generate order number
+        int orderNumber = orderDao.generateOrderNumber(today);
         Order newOrder = new Order(orderNumber);
 
         newOrder.setCustomerName("Test Customer");
@@ -177,12 +177,12 @@ class OrderDaoFileImplTest {
         // Act
         int firstOrderNumber = orderDao.generateOrderNumber(today);
         Order firstOrder = new Order(firstOrderNumber);
-        firstOrder.setOrderDate(today); // ✅ Fix: Set order date
+        firstOrder.setOrderDate(today);
         orderDao.addOrder(firstOrderNumber, firstOrder);
 
         int secondOrderNumber = orderDao.generateOrderNumber(today);
         Order secondOrder = new Order(secondOrderNumber);
-        secondOrder.setOrderDate(today); // ✅ Fix: Set order date
+        secondOrder.setOrderDate(today);
         orderDao.addOrder(secondOrderNumber, secondOrder);
 
         // Assert

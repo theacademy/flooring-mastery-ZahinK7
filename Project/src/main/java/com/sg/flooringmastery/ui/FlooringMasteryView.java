@@ -17,7 +17,6 @@ public class FlooringMasteryView {
 
     private UserIO io;
 
-    // Updated constructor to take UserIO as a parameter
     public FlooringMasteryView(UserIO io) {
         this.io = io;
     }
@@ -51,9 +50,6 @@ public class FlooringMasteryView {
         return currentOrder;
     }
 
-
-
-
     private String getValidCustomerName() {
         boolean isValid = false;
         String customerName = "";
@@ -67,7 +63,7 @@ public class FlooringMasteryView {
                 continue;
             }
 
-            // Remove extra spaces and check for invalid characters
+
             customerName = customerName.trim().replaceAll("\\s+", " ");
 
             if (!customerName.matches("^[a-zA-Z0-9.,\\s]+$")) {
@@ -96,8 +92,8 @@ public class FlooringMasteryView {
                 }
 
                 // Check maximum area limit
-                if (area.compareTo(BigDecimal.valueOf(10000000)) > 0) {
-                    io.print("Error: Area cannot exceed 10,000 square feet. Please try again.");
+                if (area.compareTo(BigDecimal.valueOf(1000000000)) > 0) {
+                    io.print("Error: Area is too big. Please try again.");
                     continue;
                 }
 

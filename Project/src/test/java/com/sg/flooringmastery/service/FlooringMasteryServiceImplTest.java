@@ -20,12 +20,12 @@ class FlooringMasteryServiceImplTest {
     @BeforeEach
     void setUp() {
         try {
-            // Use real DAO implementations
+
             productDao = new ProductDaoFileImpl();
             taxDao = new TaxDaoFileImpl();
             orderDao = new OrderDaoFileImpl();
 
-            // Use a service stub to control business logic
+
             serviceStub = new FlooringMasteryServiceStub();
         } catch (FlooringMasteryDaoException e) {
             fail("Failed to initialize DAOs due to exception: " + e.getMessage());

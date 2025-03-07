@@ -92,7 +92,7 @@ class TaxDaoFileImplTest {
     @Test
     void testLoadTaxes_fileNotFound() {
         try {
-            new TaxDaoFileImpl(); // Ensure no exception is thrown
+            new TaxDaoFileImpl();
         } catch (FlooringMasteryDaoException e) {
             assertTrue(e.getMessage().contains("Tax file NOT FOUND"), "Expected a file not found error when Taxes.txt is missing.");
         }
@@ -101,7 +101,7 @@ class TaxDaoFileImplTest {
     @Test
     void testLoadTaxes_invalidDataFormat() {
         try {
-            new TaxDaoFileImpl(); // If invalid data is present, this should throw an exception
+            new TaxDaoFileImpl();
         } catch (FlooringMasteryDaoException e) {
             assertTrue(e.getMessage().contains("Invalid tax rate value in Taxes.txt") ||
                             e.getMessage().contains("No valid tax data was loaded"),

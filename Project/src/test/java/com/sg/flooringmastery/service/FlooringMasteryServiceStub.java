@@ -10,27 +10,27 @@ import java.time.LocalDate;
 public class FlooringMasteryServiceStub extends FlooringMasteryServiceImpl {
 
     public FlooringMasteryServiceStub() {
-        super(null, null, null); // Pass nulls since we are stubbing behavior
+        super(null, null, null);
     }
 
     @Override
     public BigDecimal calculateMaterialCost(Order order) {
-        return new BigDecimal("225.00"); // Always return a fixed material cost
+        return new BigDecimal("225.00");
     }
 
     @Override
     public BigDecimal calculateLaborCost(Order order) {
-        return new BigDecimal("210.00"); // Always return a fixed labor cost
+        return new BigDecimal("210.00");
     }
 
     @Override
     public BigDecimal calculateTax(Order order) {
-        return new BigDecimal("19.36"); // Always return a fixed tax amount
+        return new BigDecimal("19.36");
     }
 
     @Override
     public BigDecimal calculateTotalCost(Order order) {
-        return new BigDecimal("454.36"); // Always return a fixed total amount
+        return new BigDecimal("454.36");
     }
 
     @Override

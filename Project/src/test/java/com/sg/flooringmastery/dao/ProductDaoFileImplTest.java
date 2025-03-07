@@ -47,7 +47,7 @@ class ProductDaoFileImplTest {
     @Test
     void testLoadProducts_fileNotFound() {
         try {
-            new ProductDaoFileImpl(); // Ensure no exception is thrown
+            new ProductDaoFileImpl();
         } catch (FlooringMasteryDaoException e) {
             assertTrue(e.getMessage().contains("Product file NOT FOUND"), "Expected a file not found error when Products.txt is missing.");
         }
@@ -56,7 +56,7 @@ class ProductDaoFileImplTest {
     @Test
     void testLoadProducts_invalidDataFormat() {
         try {
-            new ProductDaoFileImpl(); // If invalid data is present, this should throw an exception
+            new ProductDaoFileImpl();
         } catch (FlooringMasteryDaoException e) {
             assertTrue(e.getMessage().contains("Invalid numeric data in Products.txt") ||
                             e.getMessage().contains("No valid product data was loaded"),
